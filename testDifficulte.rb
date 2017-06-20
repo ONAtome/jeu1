@@ -13,24 +13,38 @@ class Personne
     else
       return "#{self.nom}: Vaincu"
     end
-    # A faire:
-    # - Renvoie le nom et les points de vie si la personne est en vie
-    # - Renvoie le nom et "vaincu" si la personne a été vaincue
   end
 
+
   def attaque(personne)
+    degats_infliges = degats_inflige
     puts "#{self.nom} attaque #{personne.nom} !"
-    puts "#{self.nom} inflige #{degats} points de dégâts"
-    personne.subit_attaque(self.degats)
-    # A faire:
-    # - Fait subir des dégats à la personne passée en paramètre
-    # - Affiche ce qu'il s'est passé
-    self.degats
+    puts "#{self.nom} inflige #{degats_infliges} points de dégâts"
+    personne.subit_attaque(degats_infliges)
+    self.degats_inflige
   end
+
+  def degats_inflige
+    degats_inflige = degats
+  end
+
+      def coup_circulaire(personnes)
+        if energie < 3
+          puts "Vous avez beau essayer, vous n'arrivez pas à réunir l'énergie nécessaire à cette attaque..."
+        else
+          puts "#{self.nom} fait un coup circulaire !"
+          puts "#{self.nom} inflige #{30 + degats_bonus} points de dégâts à tous les ennemis"
+          personnes.each do | personne |
+          personne.subit_attaque(self.degats_circulaire)
+          energie -= 3
+          end
+        end
+        self.degats_circulaire
+      end
 
   def subit_attaque(degats_recus)
     self.points_de_vie -= degats_recus
-    puts "#{self.nom} a maintenant #{self.points_de_vie} PV !"
+    puts "#{self.nom} prend #{degats_recus} degats et a maintenant #{self.points_de_vie} PV !"
     if points_de_vie <= 0
       self.en_vie = false
       puts "#{self.nom} a été tué."
@@ -38,11 +52,8 @@ class Personne
       self.en_vie = true
       puts "#{self.nom} tient bon !"
     end
-    # A faire:
-    # - Réduit les points de vie en fonction des dégats reçus
-    # - Affiche ce qu'il s'est passé
-    # - Détermine si la personne est toujours en_vie ou non
   end
+
 end
 
 class Jeu
@@ -51,10 +62,8 @@ class Jeu
 
     puts "0 - Se soigner"
     puts "1 - Améliorer son attaque"
-
-    # On commence à 2 car 0 et 1 sont réservés pour les actions
-    # de soin et d'amélioration d'attaque
-    i = 2
+    puts "2 - Coup circulaire (Coût: 3 énergie)"
+    i = 3
     monde.ennemis.each do |ennemi|
       puts "#{i} - Attaquer #{ennemi.info}"
       i = i + 1
@@ -75,8 +84,6 @@ class Jeu
       else 
         return false
       end
-    # A faire:
-    # - Déterminer la condition de fin du jeu
   end
 end
 
@@ -89,8 +96,6 @@ class Monde
   def ennemis_en_vie
     @ennemis.select{|enn| enn.en_vie == true}
   end
-    # A faire:
-    # - Ne retourner que les ennemis en vie
 end
 
 puts "Veuillez choisir le niveau de difficulté de votre aventure : "
@@ -105,16 +110,32 @@ difficulte = gets.to_i
 if difficulte == 0
 
   class Joueur < Personne
-      attr_accessor :degats_bonus
+      attr_accessor :degats_bonus, :energie
 
       def initialize(nom)
         @degats_bonus = 0
+        @energie = 0
         super(nom)
       end
 
-    def degats
+      def attaque(personne)
+        degats_infliges = degats_inflige
+        puts "#{self.nom} attaque #{personne.nom} !"
+        puts "#{self.nom} inflige #{degats_infliges} points de dégâts"
+        personne.subit_attaque(degats_infliges)
+        self.degats_inflige
+        @energie += 1
+      end
+
+
+      def degats
         degats = rand(20..30) + degats_bonus
         return degats
+      end
+
+      def degats_circulaire
+        degats_circulaire = 30 + degats_bonus
+        return degats_circulaire
       end
 
       def soin
@@ -128,6 +149,8 @@ if difficulte == 0
         self.degats_bonus = rand(20...40)
         puts "#{self.nom} augmente ses dégâts de #{degats_bonus} !"
       end
+
+
   end
 
   class Ennemi < Personne
@@ -147,10 +170,25 @@ elsif difficulte == 1
         super(nom)
       end
 
+         def attaque(personne)
+        degats_infliges = degats_inflige
+        puts "#{self.nom} attaque #{personne.nom} !"
+        puts "#{self.nom} inflige #{degats_infliges} points de dégâts"
+        personne.subit_attaque(degats_infliges)
+        self.degats_inflige
+        @energie += 1
+      end
+
+
       def degats
         degats = rand(20..30) + degats_bonus
         return degats
     end
+
+     def degats_circulaire
+        degats_circulaire = 30 + degats_bonus
+        return degats_circulaire
+      end
 
       def soin
         soin = rand(40..50)
@@ -182,9 +220,24 @@ elsif difficulte == 2
         super(nom)
       end
 
+         def attaque(personne)
+        degats_infliges = degats_inflige
+        puts "#{self.nom} attaque #{personne.nom} !"
+        puts "#{self.nom} inflige #{degats_infliges} points de dégâts"
+        personne.subit_attaque(degats_infliges)
+        self.degats_inflige
+        @energie += 1
+      end
+
+
       def degats
         degats = rand(20..30) + degats_bonus
         return degats
+      end
+
+       def degats_circulaire
+        degats_circulaire = 30 + degats_bonus
+        return degats_circulaire
       end
 
       def soin
@@ -217,9 +270,24 @@ elsif difficulte == 3
         super(nom)
       end
 
+         def attaque(personne)
+        degats_infliges = degats_inflige
+        puts "#{self.nom} attaque #{personne.nom} !"
+        puts "#{self.nom} inflige #{degats_infliges} points de dégâts"
+        personne.subit_attaque(degats_infliges)
+        self.degats_inflige
+        @energie += 1
+      end
+
+
       def degats
         degats = rand(20..30) + degats_bonus
         return degats
+      end
+
+       def degats_circulaire
+        degats_circulaire = 30 + degats_bonus
+        return degats_circulaire
       end
 
       def soin
@@ -252,10 +320,25 @@ elsif difficulte == 4
           super(nom)
       end
 
+         def attaque(personne)
+        degats_infliges = degats_inflige
+        puts "#{self.nom} attaque #{personne.nom} !"
+        puts "#{self.nom} inflige #{degats_infliges} points de dégâts"
+        personne.subit_attaque(degats_infliges)
+        self.degats_inflige
+        @energie += 1
+      end
+
+
         def degats
           degats = rand(20..30) + degats_bonus
           return degats
         end
+
+         def degats_circulaire
+        degats_circulaire = 30 + degats_bonus
+        return degats_circulaire
+      end
 
         def soin
           soin = rand(10..20)
@@ -287,9 +370,24 @@ elsif difficulte == 5
         super(nom)
       end
 
+         def attaque(personne)
+        degats_infliges = degats_inflige
+        puts "#{self.nom} attaque #{personne.nom} !"
+        puts "#{self.nom} inflige #{degats_infliges} points de dégâts"
+        personne.subit_attaque(degats_infliges)
+        self.degats_inflige
+        @energie += 1
+      end
+
+
       def degats
         degats = rand(1..100) + degats_bonus
         return degats
+      end
+
+       def degats_circulaire
+        degats_circulaire = rand(1...100) + degats_bonus
+        return degats_circulaire
       end
 
       def soin
@@ -322,22 +420,22 @@ monde = Monde.new
 
 # Ajout des ennemis
 monde.ennemis = [
-  Ennemi.new("Balrog"),
-  Ennemi.new("Goblin"),
-  Ennemi.new("Squelette")
+  Ennemi.new("Slime bleu"),
+  Ennemi.new("Slime vert"),
+  Ennemi.new("Slime rouge")
 ]
 
 
 
 # Initialisation du joueur
-puts "Comment vous appelez-vous aventurier ?"
+puts "Comment vous appelez-vous, Aventurier ?"
 joueur = Joueur.new(gets.chomp.to_s)
 
 # Message d'introduction. \n signifie "retour à la ligne"
 puts "\n\nAinsi débutent les aventures de #{joueur.nom}, le héros légendaire\n\n"
 
 # Boucle de jeu principale
-100.times do |tour|
+while true do |tour|
   puts "\n------------------ Tour numéro #{tour + 1 } ------------------"
 
   # Affiche les différentes actions possibles
@@ -352,6 +450,8 @@ puts "\n\nAinsi débutent les aventures de #{joueur.nom}, le héros légendaire\
     joueur.soin
   elsif choix == 1
     joueur.ameliorer_degats
+  elsif choix == 2
+    joueur.coup_circulaire(monde.ennemis)
   elsif choix == 99
     # On quitte la boucle de jeu si on a choisi
     # 99 qui veut dire "quitter"
@@ -373,7 +473,7 @@ puts "\n\nAinsi débutent les aventures de #{joueur.nom}, le héros légendaire\
     ennemi.attaque(joueur)
   end
 
-  puts "\nEtat du héros: #{joueur.info}\n"
+  puts "\n#{joueur.info}\n"
 
   # Si le jeu est fini, on interompt la boucle
   break if Jeu.est_fini(joueur, monde)
@@ -389,3 +489,5 @@ if joueur.en_vie
 else
   puts "Vous avez perdu !"
 end
+
+#Pour bloquer l'attaque si pas assez d'énergie mettre un true/false qui bloque la possibilité
