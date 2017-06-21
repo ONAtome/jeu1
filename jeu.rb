@@ -91,7 +91,7 @@ class Jeu
 			puts "3 - Rafale de coups (Coût: 5 fureur)"
 			puts "4 - Accumuler de la fureur"
 			i = 5
-			monde.ennemis.each do |ennemi|
+			monde.ennemis_en_vie.each do |ennemi|
 				puts "#{i} - Attaquer #{ennemi.info}"
 				i = i + 1
 			end
@@ -104,7 +104,7 @@ class Jeu
 			puts "2 - Coup circulaire (Coût: 3 fureur)"
 			puts "3 - Accumuler de la fureur"
 			i = 4
-			monde.ennemis.each do |ennemi|
+			monde.ennemis_en_vie.each do |ennemi|
 				puts "#{i} - Attaquer #{ennemi.info}"
 				i = i + 1
 			end
@@ -116,7 +116,7 @@ class Jeu
 			puts "1 - Améliorer son attaque"
 			puts "2 - Accumuler de la fureur"
 			i = 3
-			monde.ennemis.each do |ennemi|
+			monde.ennemis_en_vie.each do |ennemi|
 				puts "#{i} - Attaquer #{ennemi.info}"
 				i = i + 1
 			end
@@ -665,23 +665,23 @@ puts "\n\nAinsi débutent les aventures de #{joueur.nom}, le héros légendaire\
 		elsif monde.choix == 1
 			joueur.ameliorer_degats
 		elsif monde.choix == 2
-			joueur.coup_circulaire(monde.ennemis)
+			joueur.coup_circulaire(monde.ennemis_en_vie)
 		elsif monde.choix == 3
 			puts "Choisir la cible: "
 			i = 1
-			monde.ennemis.each do |ennemi|
+			monde.ennemis_en_vie.each do |ennemi|
 				puts "#{i} - Attaquer #{ennemi.info}"
 				i = i + 1
 			end
 			monde.choix = gets.chomp.to_i
-			ennemi_a_attaquer = monde.ennemis[monde.choix - 1]
+			ennemi_a_attaquer = monde.ennemis_en_vie[monde.choix - 1]
 			joueur.rafale(ennemi_a_attaquer)
 		elsif monde.choix == 4
 			joueur.charge
 		elsif monde.choix == 99
 			break
 		elsif
-			ennemi_a_attaquer = monde.ennemis[monde.choix - 5]
+			ennemi_a_attaquer = monde.ennemis_en_vie[monde.choix - 5]
 			joueur.attaque(ennemi_a_attaquer)
 		else
 			puts "Le manque d'adresse de #{joueur.nom} lui fait rater son action"
@@ -692,13 +692,13 @@ puts "\n\nAinsi débutent les aventures de #{joueur.nom}, le héros légendaire\
 		elsif monde.choix == 1
 			joueur.ameliorer_degats
 		elsif monde.choix == 2
-			joueur.coup_circulaire(monde.ennemis)
+			joueur.coup_circulaire(monde.ennemis_en_vie)
 		elsif monde.choix == 3
 			joueur.charge
 		elsif monde.choix == 99
 			break
 		elsif
-			ennemi_a_attaquer = monde.ennemis[monde.choix - 4]
+			ennemi_a_attaquer = monde.ennemis_en_vie[monde.choix - 4]
 			joueur.attaque(ennemi_a_attaquer)
 		else
 			puts "Le manque d'adresse de #{joueur.nom} lui fait rater son action"
@@ -713,7 +713,7 @@ puts "\n\nAinsi débutent les aventures de #{joueur.nom}, le héros légendaire\
 		elsif monde.choix == 99
 			break
 		elsif
-			ennemi_a_attaquer = monde.ennemis[monde.choix - 3]
+			ennemi_a_attaquer = monde.ennemis_en_vie[monde.choix - 3]
 			joueur.attaque(ennemi_a_attaquer)
 		else
 			puts "Le manque d'adresse de #{joueur.nom} lui fait rater son action"
