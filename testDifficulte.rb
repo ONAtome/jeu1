@@ -48,8 +48,15 @@ class Personne
 	end
 
 	def subit_attaque(degats_recus)
-		self.points_de_vie -= degats_recus
-		puts "#{self.nom} prend #{degats_recus} degats et a maintenant #{self.points_de_vie} PV !"
+		if @blocage == true
+			bloque = 15
+			self.points_de_vie -= (degats_recus - bloque)
+			puts "#{self.nom} bloque #{bloque} points de dégâts, prend #{degats_recus - bloque} dégâts et a maintenant #{self.points_de_vie} PV !"
+			@blocage = false
+		else
+			self.points_de_vie -= degats_recus
+			puts "#{self.nom} prend #{degats_recus} dégâts et a maintenant #{self.points_de_vie} PV !"
+		end
 		if points_de_vie <= 0
 			self.en_vie = false
 			puts "#{self.nom} a été tué."
@@ -184,9 +191,29 @@ if difficulte == 0
 	end
 
 	class Ennemi < Personne
+		attr_accessor :blocage
+			def initialize(nom)
+				@nom = nom
+				@points_de_vie = 100
+				@en_vie = true
+				@blocage = false
+			end
+
 			def degats
 				degats = rand(1...5)
 				return degats
+			end
+
+			def soin
+				soin = rand(1..10)
+				self.points_de_vie += soin
+				puts "#{self.nom} récupère #{soin} PV !"
+				return soin
+			end
+
+			def blocage
+				@blocage = true
+				return @blocage
 			end
 	end
 
@@ -248,6 +275,18 @@ elsif difficulte == 1
 				degats = rand(5...10)
 				return degats
 			end
+
+			def soin
+				soin = rand(1..10)
+				self.points_de_vie += soin
+				puts "#{self.nom} récupère #{soin} PV !"
+				return soin
+			end
+
+			def blocage
+				@blocage = true
+				return @blocage
+			end
 	end
 
 elsif difficulte == 2
@@ -303,12 +342,25 @@ elsif difficulte == 2
 			end
 	end
 
-	class Ennemi < Personne
+class Ennemi < Personne
 			def degats
 				degats = rand(10...12)
 				return degats
 			end
+
+			def soin
+				soin = rand(1..10)
+				self.points_de_vie += soin
+				puts "#{self.nom} récupère #{soin} PV !"
+				return soin
+			end
+
+			def blocage
+				@blocage = true
+				return @blocage
+			end
 	end
+
 
 elsif difficulte == 3
 
@@ -367,6 +419,18 @@ elsif difficulte == 3
 			def degats
 				degats = rand(14...18)
 				return degats
+			end
+
+			def soin
+				soin = rand(1..10)
+				self.points_de_vie += soin
+				puts "#{self.nom} récupère #{soin} PV !"
+				return soin
+			end
+
+			def blocage
+				@blocage = true
+				return @blocage
 			end
 	end
 
@@ -427,6 +491,18 @@ elsif difficulte == 4
 				degats = rand(20...25)
 				return degats
 			end
+
+			def soin
+				soin = rand(1..10)
+				self.points_de_vie += soin
+				puts "#{self.nom} récupère #{soin} PV !"
+				return soin
+			end
+
+			def blocage
+				@blocage = true
+				return @blocage
+			end
 	end
 
 elsif difficulte == 5
@@ -486,6 +562,18 @@ elsif difficulte == 5
 			def degats
 				degats = rand(1...100)
 				return degats
+			end
+
+			def soin
+				soin = rand(1..10)
+				self.points_de_vie += soin
+				puts "#{self.nom} récupère #{soin} PV !"
+				return soin
+			end
+
+			def blocage
+				@blocage = true
+				return @blocage
 			end
 	end
 
@@ -562,8 +650,15 @@ puts "\n\nAinsi débutent les aventures de #{joueur.nom}, le héros légendaire\
 	puts "\nLES ENNEMIS RIPOSTENT !"
 	# Pour tous les ennemis en vie ...
 	monde.ennemis_en_vie.each do |ennemi|
-		# ... le héro subit une attaque.
-		ennemi.attaque(joueur)
+		choix_ennemis = rand(1..3)
+		if choix_ennemis == 1
+			ennemi.attaque(joueur)
+		elsif choix_ennemis == 2
+			puts "#{ennemi.nom} se prépare à bloquer la prochaine attaque"
+			ennemi.blocage
+		elsif choix_ennemis == 3
+			ennemi.soin
+		end	
 	end
 
 	puts "\n#{joueur.info}\n"
